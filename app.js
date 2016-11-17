@@ -6,45 +6,35 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var pg = require('pg');
 
 // Local JS code.
 var routes = require('./routes/index');
-var users = require('./routes/users');
 
 // Set up objects.
 var app = express();
-var connection_string = (process.env.DATABASE_URL || 'postgres://localhost:5432/webware');
-var client = new pg.Client(connection_string);
 
 // View engine setup.
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// UnconnectionStringcomment after placing your favicon in /public
+// Conf.
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-
 app.use(cookieSession({name: 'session', keys: ['key1', 'key2']}));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use('/', routes);
-app.use('/users', users);
 
-// Catch 404 and forward to error handler
+// Catch 404 and forward to error handler.
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
-// error handlers
-
-// development error handler
-// will print stacktrace
+// Development error handler will print stacktrace.
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
@@ -55,8 +45,7 @@ if (app.get('env') === 'development') {
   });
 }
 
-// production error handler
-// no stacktraces leaked to user
+// Production error handler no stacktraces leaked to user.
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
@@ -64,6 +53,5 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
 
 module.exports = app;
