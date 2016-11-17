@@ -6,6 +6,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var nunjucks = require('nunjucks');
 
 // Local JS code.
 var routes = require('./routes/index');
@@ -14,8 +15,13 @@ var routes = require('./routes/index');
 var app = express();
 
 // View engine setup.
+nunjucks.configure('views', {
+    autoescape: true,
+    express: app
+});
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.engine( 'html', nunjucks.render ) ;
+app.set('view engine', 'html');
 
 // Conf.
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
