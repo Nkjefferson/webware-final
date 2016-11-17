@@ -51,8 +51,8 @@ function get_student_attrs(name, res) {
     // Finally respond to request.
     query.on('end', function() {
       done();
-      console.log(results[0]);
-      return res.render('student', {logged_in: true});
+      var name = results[0].name;
+      return res.render('student', {logged_in: true, name: name});
     })
   });
 }
