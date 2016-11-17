@@ -79,7 +79,7 @@ router.get('/student', function (req, res, next) {
   }
 
   // Create student entry if it doesn't exist.
-  create_student(name);
+  console.log(create_student(name));
 
   res.render('student', {logged_in: true});
 });
