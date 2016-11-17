@@ -1,4 +1,5 @@
 // Libraries.
+var cookieSession = require('cookie-session');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -23,6 +24,7 @@ app.set('view engine', 'jade');
 // UnconnectionStringcomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
+app.use(cookieSession({name: 'session', keys: ['key1', 'key2']}));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
