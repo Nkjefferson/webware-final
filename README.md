@@ -1,5 +1,7 @@
-I have already set up a database for this app to access. Haven't created the
-right tables, or anything like that.
+I have already set up a database (in production) for this app to access. Haven't
+created the right tables, or anything like that.
+
+YOU GUYS WILL NEED A LOCAL POSTGRESQL DATABASE TO RUN THIS LOCALLY.
 
 Here's the plan. We have a database storing three models:
     Student(id, name, profile_text, img_url)
