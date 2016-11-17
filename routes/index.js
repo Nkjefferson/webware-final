@@ -4,7 +4,7 @@ var router = express.Router();
 var connection_string = (process.env.DATABASE_URL || 'postgres://localhost:5432/webware');
 
 // Creates a student entry with the given name, if it doesn't already exist.
-function create_student(name) {
+function create_student(name, res) {
   var qs = "INSERT INTO students(name) SELECT ($1) WHERE NOT EXISTS " +
             "(SELECT name FROM students WHERE name=$2);";
   var data = [name, name];
@@ -22,8 +22,38 @@ function create_student(name) {
 
     query.on('end', function() {
       done();
-      return true;
+      get_student_attrs(name, res);
     });
+  });
+}
+
+function get_student_attrs(name, res) {
+  var qs = "SELECT (name) FROM students WHERE name=$1";
+  var data = [name];
+  var results = [];
+
+  pg.connect(connection_string, function (err, client, done) {
+    // Handle connection errors.
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+
+    // Insert the new student.
+    var query = client.query(qs, data);
+
+    // Push each new row to results. Should only be one...
+    query.on('row', function(row) {
+      results.push(row);
+    });
+
+    // Finally respond to request.
+    query.on('end', function() {
+      done();
+      console.log(results[0]);
+      return res.render('student', {logged_in: true});
+    })
   });
 }
 
@@ -79,9 +109,7 @@ router.get('/student', function (req, res, next) {
   }
 
   // Create student entry if it doesn't exist.
-  console.log(create_student(name));
-
-  res.render('student', {logged_in: true});
+  create_student(name, res);
 });
 
 router.get('/logout', function (req, res, next) {
