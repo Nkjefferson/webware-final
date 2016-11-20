@@ -7,20 +7,40 @@
       <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css'>
       <script src='https://code.jquery.com/jquery-3.1.1.min.js'></script>
       <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
+      <script src="https://use.fontawesome.com/53cba9084c.js"></script>
     </head>
 
     <body>
-      <div class="container">
-        {% if logged_in %}
-          <div class="row">
-            <div class="col-md-12">
-              <a href='/logout' class="btn btn=default">Log Out</a>
+        <nav class="navbar navbar-default navbar-static-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#"><span style="font-size:16px;"><i class="fa fa-home" aria-hidden="true"></span></i>Project name</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                      {% if logged_in %}
+                        <ul class="nav navbar-nav navbar-right">
+                          <li style="margin-right:10px;"><a href='/logout' >Log Out </a>
+                        </ul>
+                      {% endif %}
+                    </ul>
+                </div><!--/.nav-collapse -->
             </div>
-           </div>
-        {% endif %}
+        </nav>
+
         {% block content %}
         {% endblock %}
-      </div>
     </body>
   </html>
 
