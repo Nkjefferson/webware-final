@@ -5,8 +5,8 @@ var connection_string = (process.env.DATABASE_URL || 'postgres://localhost:5432/
 
 // Creates a student entry with the given name, if it doesn't already exist.
 function create_student(name, res) {
-  var qs = "INSERT INTO students(name) SELECT ($1) WHERE NOT EXISTS " +
-            "(SELECT name FROM students WHERE name=$2);";
+  var qs = "INSERT INTO student(name) SELECT ($1) WHERE NOT EXISTS " +
+            "(SELECT name FROM student WHERE name=$2);";
   var data = [name, name];
 
   pg.connect(connection_string, function (err, client, done) {
@@ -28,7 +28,7 @@ function create_student(name, res) {
 }
 
 function get_student_attrs(name, res) {
-  var qs = "SELECT (name) FROM students WHERE name=$1";
+  var qs = "SELECT (name) FROM student WHERE name=$1";
   var data = [name];
   var results = [];
 
