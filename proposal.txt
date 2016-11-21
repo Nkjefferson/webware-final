@@ -1,0 +1,26 @@
+Here's the plan. We'll have a database storing these tables:
+
+student(id SERIAL PRIMARY KEY, name text, profile text, img_url text);
+professor(id SERIAL PRIMARY KEY, name text, profile text, img_url text);
+course(id SERIAL PRIMARY KEY, name text, professor_id integer REFERENCES professor(id));
+registration(student_id integer REFERENCES student(id), course_id integer REFERENCES course(id));
+
+Then, we'll build a UI for the information, based on the following features:
+
+Students can log in and:
+    - Update their profile.
+    - Change their profile picture.
+    - Register for courses (only those that professors have already created).
+    - See the names of other students in each of their courses.
+
+Professors can log in and:
+    - Update their profile.
+    - Change their profile picture.
+    - Register courses they will be teaching.
+    - See the names of students in each of the courses their teaching.
+
+Bonus:
+    - If we have time after that stuff, we would like professors to be able to
+      play a flash card name game with the pictures of students in each of their
+      classes.
+
