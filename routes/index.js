@@ -1,10 +1,11 @@
 var express = require('express');
 var pg = require('pg');
+var fs = require('fs');
 var router = express.Router();
 var connection_string = (process.env.DATABASE_URL || 'postgres://localhost:5432/webware');
 
 // Creates a student entry with the given name, if it doesn't already exist.
-function create_student(name, res) {
+function create_student(name, req, res) {
   var qs = "INSERT INTO student(name) SELECT ($1) WHERE NOT EXISTS " +
             "(SELECT name FROM student WHERE name=$2);";
   var data = [name, name];
@@ -22,13 +23,13 @@ function create_student(name, res) {
 
     query.on('end', function() {
       done();
-      get_student_attrs(name, res);
+      get_student_attrs(name, req, res);
     });
   });
 }
 
-function get_student_attrs(name, res) {
-  var qs = "SELECT (name) FROM student WHERE name=$1";
+function get_student_attrs(name, req, res) {
+  var qs = "SELECT row_to_json(r) FROM (SELECT (name, profile, img_url) FROM student WHERE name=$1) r";
   var data = [name];
   var results = [];
 
@@ -45,26 +46,38 @@ function get_student_attrs(name, res) {
 
     // Push each new row to results. Should only be one...
     query.on('row', function(row) {
-      results.push(row);
+      var obj = row.row_to_json.row;
+      results.push({
+        name: obj.f1,
+        profile: obj.f2,
+        img_url: obj.f3
+      });
+      results.push(obj);
     });
 
     // Finally respond to request.
     query.on('end', function() {
       done();
-      var name = results[0].name;
-      return res.render('student', {logged_in: true, name: name});
+
+      var profile = results[0].profile;
+      req.session.profile = profile;
+
+      var img_url = results[0].img_url;
+      req.session.img_url = img_url;
+
+      return res.render('student', {
+        logged_in: true,
+        name: results[0].name,
+        profile: profile ? profile.replace(/(\r)?\n/g, '<br />') : '',
+        img_url: img_url
+      });
     })
   });
 }
 
-// function create_student(name) {
-//   var results = [];
-//   var query = client.query(qs, [name]);
-//
-//   query.on('end', function() {
-//     client.end();
-//   });
-// }
+router.get('/proposal', function (req, res, next) {
+  res.end(fs.readFileSync('proposal.txt'));
+});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -95,9 +108,9 @@ router.get('/professor', function (req, res, next) {
 
   if (!(role && name) || (role != 'professor')) {
     res.redirect('/');
+  } else {
+    res.render('professor', {logged_in: true});
   }
-
-  res.render('professor', {logged_in: true});
 });
 
 router.get('/student', function (req, res, next) {
@@ -106,11 +119,65 @@ router.get('/student', function (req, res, next) {
 
   if (!(role && name) || (role != 'student')) {
     res.redirect('/');
+  } else {
+    // Create student entry if it doesn't exist.
+    // This function also renders the response, afterwards.
+    create_student(name, req, res);
   }
-
-  // Create student entry if it doesn't exist.
-  create_student(name, res);
 });
+
+router.get('/student/edit', function(req, res, next) {
+  var role = req.session.role || false;
+  var name = req.session.name || false;
+
+  if (!(role && name) || (role != 'student')) {
+    res.redirect('/');
+  } else {
+    res.render('edit_student', {
+      logged_in: true,
+      profile: req.session.profile,
+      img_url: req.session.img_url
+    });
+  }
+});
+
+router.post('/student/edit', function(req, res, next) {
+  var role = req.session.role || false;
+  var name = req.session.name || false;
+
+  if (!(role && name) || (role != 'student')) {
+    res.redirect('/');
+  } else {
+    var profile = req.body.profile_text;
+    var img_url = req.body.img_url;
+
+    // Update the database.
+    // This function will also render the response after.
+    update_student(profile, img_url, req, res);
+  }
+});
+
+function update_student(profile, img_url, req, res) {
+  var qs = "UPDATE student SET profile=$1, img_url=$2 WHERE name=$3";
+  var data = [profile, img_url, req.session.name];
+
+  pg.connect(connection_string, function (err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+
+    // Insert the new student.
+    var query = client.query(qs, data);
+
+    query.on('end', function() {
+      done();
+      res.redirect('/student');
+    });
+  });
+}
 
 router.get('/logout', function (req, res, next) {
   req.session.role = false;
