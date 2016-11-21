@@ -1,7 +1,7 @@
 var express = require('express');
 var pg = require('pg');
 var router = express.Router();
-var connection_string = (process.env.DATABASE_URL || 'postgres://localhost:5432/webware');
+var connection_string = 'postgres://dotooizxzqvdva:4Ls5P_fmj03gfK4BlJDrWg6d2K@ec2-54-227-250-80.compute-1.amazonaws.com:5432/d3qeftjnshumcp?ssl=true';
 
 // Creates a student entry with the given name, if it doesn't already exist.
 function create_student(name, res) {
@@ -92,12 +92,13 @@ router.get('/', function(req, res, next) {
 router.get('/professor', function (req, res, next) {
   var role = req.session.role || false;
   var name = req.session.name || false;
+  var  classes = ["cs3013", "cs3733","cs4241"];
 
   if (!(role && name) || (role != 'professor')) {
     res.redirect('/');
   }
 
-  res.render('professor', {logged_in: true});
+  res.render('professor', {logged_in: true, class:classes});
 });
 
 router.get('/student', function (req, res, next) {

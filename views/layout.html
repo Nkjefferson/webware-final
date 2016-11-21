@@ -20,7 +20,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#"><span style="font-size:16px;"><i class="fa fa-home" aria-hidden="true"></span></i>Project name</a>
+                    <a class="navbar-brand" href="#"><span style="font-size:20px;"><i class="fa fa-home" aria-hidden="true"></i></span>  Project name</a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
@@ -31,7 +31,7 @@
                     <ul class="nav navbar-nav navbar-right">
                       {% if logged_in %}
                         <ul class="nav navbar-nav navbar-right">
-                          <li style="margin-right:10px;"><a href='/logout' >Log Out </a>
+                          <li class='logout'><button class='btn btn-default'><a href='/logout' >Log Out </button></a>
                         </ul>
                       {% endif %}
                     </ul>
@@ -39,8 +39,10 @@
             </div>
         </nav>
 
+        <div class="container-fluid">
         {% block content %}
         {% endblock %}
+        </div>
     </body>
   </html>
 
