@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block nav %}
+  
+{% endblock%}
+{% block content %}
+  <div class='row'>
+    
+    <div class='container-fluid'>
+      <div class='row col-md-12'>
+        <div class='col-md-6 col-md-offset-3'>
+          <h1>Create a Course</h1>
+          <div class='well'>
+            <div class='form-group'>
+              <label for='class'>Course Number:</label>
+              <input type='text' class='form-control' id='class'><br/>
+              <label for='description'>Description:</label>
+              <input type='text' class='form-control' id='description'><br/>
+              <button class='btn btn-default pull-right' type='submit'>Add +</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -1,25 +1,45 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class='row'>
-  <div class='col-md-6 col-md-offset-3'>
-    <h1 class='center'>Welcome, {{ name }}!</h1>
-    <hr/>
-  </div>
-</div>
-<div class='row'>
-  <div class='col-md-4 col-md-offset-3'>
-    <h2>Profile</h2>
-    {% if profile %}
-    <p>{{ profile | safe }}</p>
-    {% else %}
-    <p>
-      <em>You have no profile!</em>
-    </p>
-    {% endif %}
-    <a href="/student/edit" class="btn btn-default">Edit Profile</a>
-  </div>
-  <div class="col-md-2">
-    <img class="profile-pic img-responsive" src="{{ img_url }}">
+
+  <div class='row'>
+    <div class='col-md-2'>
+      {% if profile %}
+        <div class='panel panel-default'>
+          <div class='panel-heading'>
+            Available Classes
+          </div>
+          <ul class='list-group'>
+            {% for item in class %}
+              <a href="#/{{item}}" <li class='list-group-item'> {{item}} </li></a>
+            {% endfor %} 
+            <a href="/addClass" <li class='list-group-item list-group-item-info'> Add Class <span style='float:right;'><i class="fa fa-plus" aria-hidden="true"></i></span></li></a>
+          </ul>
+        </div>
+      {% endif %}
+    </div>
+    <div class='container-fluid'>
+      <div class='row col-md-10'>
+      <div class='col-md-6 col-md-offset-3'>
+        <h1 class='center'>Welcome, {{ name }}!</h1>
+        <hr/>
+      </div>
+        <div class='col-md-4 col-md-offset-3'>
+          <h2>Profile</h2>
+          {% if profile %}
+          <p>{{ profile | safe }}</p>
+          {% else %}
+          <p>
+            <em>You have no profile!</em>
+          </p>
+          {% endif %}
+          <a href="/student/edit" class="btn btn-default">Edit Profile</a>
+        </div>
+        <div class="col-md-2">
+          <img class="profile-pic img-responsive" src="{{ img_url }}">
+        </div>
+      </div>
+    </div>
+    </div>
   </div>
 </div>
 

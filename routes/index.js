@@ -114,6 +114,18 @@ router.get('/professor', function (req, res, next) {
   }
 });
 
+router.get('/addClass', function (req, res, next) {
+  var role = req.session.role || false;
+  var name = req.session.name || false;
+  var  classes = ["cs3013", "cs3733","cs4241"];
+
+  if (!(role && name) || (role != 'professor')) {
+    res.redirect('/');
+  } else {
+    res.render('addClass', {logged_in: true, class:classes});
+  }
+});
+
 router.get('/student', function (req, res, next) {
   var role = req.session.role || false;
   var name = req.session.name || false;
