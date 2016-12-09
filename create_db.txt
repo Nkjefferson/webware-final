@@ -2,15 +2,11 @@ CREATE TABLE student(id SERIAL PRIMARY KEY, name text, profile text, img_url tex
 CREATE TABLE professor(id SERIAL PRIMARY KEY, name text, profile text, img_url text);
 CREATE TABLE course(id SERIAL PRIMARY KEY, name text, professor_id integer REFERENCES professor(id));
 CREATE TABLE registration(student_id integer REFERENCES student(id), course_id integer REFERENCES course(id));
-
 INSERT INTO student(id, name, profile, img_url) VALUES (1, 'atrose', 'My profile!', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Smiley.svg/220px-Smiley.svg.png');
 INSERT INTO student(id, name, profile, img_url) VALUES (2, 'nkjefferson', 'I am Nate howdy howdy howdy.', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Smiley.svg/220px-Smiley.svg.png');
-
 INSERT INTO professor(id, name, profile, img_url) VALUES (1, 'lane', 'I am a professor howdy howdy howdy.', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Smiley.svg/220px-Smiley.svg.png');
-
 INSERT INTO course(id, name, professor_id) VALUES (1, 'CS4241', 1);
 INSERT INTO course(id, name, professor_id) VALUES (2, 'ECE0001', 1);
-
-INSERT INTO registration(student_id, course_id) VALUES (1, 1); -- atrose in CS4241
-INSERT INTO registration(student_id, course_id) VALUES (2, 1); -- nkjefferson in CS4241
+INSERT INTO registration(student_id, course_id) VALUES (1, 1);
+INSERT INTO registration(student_id, course_id) VALUES (2, 1);
 

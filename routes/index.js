@@ -2,184 +2,122 @@ var express = require('express');
 var pg = require('pg');
 var fs = require('fs');
 var router = express.Router();
-var connection_string = (process.env.DATABASE_URL || 'postgres://localhost:5432/webware');
 
-// Creates a student entry with the given name, if it doesn't already exist.
-function create_student(name, req, res) {
-  var qs = "INSERT INTO student(name) SELECT ($1) WHERE NOT EXISTS " +
-            "(SELECT name FROM student WHERE name=$2);";
-  var data = [name, name];
+// Application specific database code.
+var db = require('../database/db');
 
-  pg.connect(connection_string, function (err, client, done) {
-    // Handle connection errors
-    if(err) {
-      done();
-      console.log(err);
-      return res.status(500).json({success: false, data: err});
-    }
+// Frequently used strings.
+const professor_role = 'professor';
+const student_role = 'student';
 
-    // Insert the new student.
-    var query = client.query(qs, data);
-
-    query.on('end', function() {
-      done();
-      get_student_attrs(name, req, res);
-    });
-  });
-}
-
-function get_student_attrs(name, req, res) {
-  var qs = "SELECT row_to_json(r) FROM (SELECT (name, profile, img_url) FROM student WHERE name=$1) r";
-  var data = [name];
-  var results = [];
-
-  pg.connect(connection_string, function (err, client, done) {
-    // Handle connection errors.
-    if(err) {
-      done();
-      console.log(err);
-      return res.status(500).json({success: false, data: err});
-    }
-
-    // Insert the new student.
-    var query = client.query(qs, data);
-
-    // Push each new row to results. Should only be one...
-    query.on('row', function(row) {
-      var obj = row.row_to_json.row;
-      results.push({
-        name: obj.f1,
-        profile: obj.f2,
-        img_url: obj.f3
-      });
-      results.push(obj);
-    });
-
-    // Finally respond to request.
-    query.on('end', function() {
-      done();
-
-      var profile = results[0].profile;
-      req.session.profile = profile;
-
-      var img_url = results[0].img_url;
-      req.session.img_url = img_url;
-
-      return res.render('student', {
-        logged_in: true,
-        name: results[0].name,
-        profile: profile ? profile.replace(/(\r)?\n/g, '<br />') : '',
-        img_url: img_url
-      });
-    })
-  });
-}
-
-router.get('/proposal', function (req, res, next) {
-  res.end(fs.readFileSync('proposal.txt'));
-});
-
-/* GET home page. */
+/*
+GET home page.
+ */
 router.get('/', function(req, res, next) {
-  res.end(fs.readFileSync('proposal.txt'));
-  return;
-  var role = req.session.role || false;
-  var name = req.session.name || false;
+  if (meets_required_role(req)) {
 
-  // Already logged in.
-  if (role && name) {
 
-    // Redirect to professor page.
-    if (role == "professor") {
-      res.redirect('/professor');
-
-    // Redirect to student page.
-    } else if (role == "student") {
-      res.redirect('/student');
-    }
-
-  // Not already logged in.
+    // Already logged in.
+    res.redirect('/' + req.session.role);
   } else {
+
+    // Not already logged in.
     res.render('login', {logged_in: false});
   }
 });
 
+router.get('/courses', function(req, res, next) {
+  if (meets_required_role(req)) {
+    // Already logged in.
+    res.redirect('/' + req.session.role + '/courses');
+  } else {
+    // Not already logged in.
+    res.render('login', {logged_in: false});
+  }
+});
+
+
+/*
+Professor home page.
+ */
 router.get('/professor', function (req, res, next) {
-  var role = req.session.role || false;
-  var name = req.session.name || false;
+  if (meets_required_role(req, professor_role)) {
 
-  if (!(role && name) || (role != 'professor')) {
+    // Login to existing account, or create a new one.
+    //db.login_or_register_professor(req, res);
+  }
+
+  else {
+    // Not logged in.
     res.redirect('/');
-  } else {
-    res.render('professor', {logged_in: true});
   }
 });
 
+/*
+Student home page.
+ */
 router.get('/student', function (req, res, next) {
-  var role = req.session.role || false;
-  var name = req.session.name || false;
+  if (meets_required_role(req, student_role)) {
 
-  if (!(role && name) || (role != 'student')) {
+    // Login to existing account, or create a new one.
+    db.login_or_register_student(req, res);
+  }
+
+  else {
+    // Not logged in.
     res.redirect('/');
-  } else {
-    // Create student entry if it doesn't exist.
-    // This function also renders the response, afterwards.
-    create_student(name, req, res);
   }
 });
 
-router.get('/student/edit', function(req, res, next) {
-  var role = req.session.role || false;
-  var name = req.session.name || false;
+/*
+Student view courses page.
+ */
+router.get('/student/courses', function (req, res, next) {
+  if (meets_required_role(req, student_role)) {
+    // Grab list of courses from database.
+    db.get_student_courses(req, res);
+  }
 
-  if (!(role && name) || (role != 'student')) {
+  else {
+    // Not logged in.
     res.redirect('/');
-  } else {
+  }
+});
+
+/*
+GET Student edit profile page.
+ */
+router.get('/student/edit', function(req, res, next) {
+  if (meets_required_role(req, student_role)) {
+    // Prefill form.
     res.render('edit_student', {
       logged_in: true,
       profile: req.session.profile,
       img_url: req.session.img_url
     });
+  } else {
+
+    // Not logged in.
+    res.redirect('/');
   }
 });
 
+/*
+POST Student edit profile page.
+ */
 router.post('/student/edit', function(req, res, next) {
-  var role = req.session.role || false;
-  var name = req.session.name || false;
-
-  if (!(role && name) || (role != 'student')) {
-    res.redirect('/');
-  } else {
+  if (meets_required_role(req, student_role)) {
     var profile = req.body.profile_text;
     var img_url = req.body.img_url;
 
-    // Update the database.
-    // This function will also render the response after.
-    update_student(profile, img_url, req, res);
+    // Update the database, and respond to request.
+    db.update_student(profile, img_url, req, res);
+
+  } else {
+    // Not logged in.
+    res.redirect('/');
   }
 });
-
-function update_student(profile, img_url, req, res) {
-  var qs = "UPDATE student SET profile=$1, img_url=$2 WHERE name=$3";
-  var data = [profile, img_url, req.session.name];
-
-  pg.connect(connection_string, function (err, client, done) {
-    // Handle connection errors
-    if(err) {
-      done();
-      console.log(err);
-      return res.status(500).json({success: false, data: err});
-    }
-
-    // Insert the new student.
-    var query = client.query(qs, data);
-
-    query.on('end', function() {
-      done();
-      res.redirect('/student');
-    });
-  });
-}
 
 router.get('/logout', function (req, res, next) {
   req.session.role = false;
@@ -198,6 +136,26 @@ router.post('/login', function(req, res, next) {
 
   res.redirect('/');
 });
+
+/*
+ Verify that a request is from a properly logged in user.
+ */
+function meets_required_role(req, required_role) {
+  // Pull data from session cookie.
+  var role = req.session.role || false;
+  var name = req.session.name || false;
+
+  // If a role is specified it must be met.
+  if (!(required_role === undefined)) {
+    if (role != required_role) {
+      return false;
+    }
+  }
+
+  // Return true if both are defined.
+  return (role && name);
+}
+
 
 module.exports = router;
 

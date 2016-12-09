@@ -20,10 +20,11 @@ nunjucks.configure('views', {
     express: app
 });
 app.set('views', path.join(__dirname, 'views'));
-app.engine( 'html', nunjucks.render ) ;
+app.engine('html', nunjucks.render ) ;
 app.set('view engine', 'html');
 
 // Conf.
+// TODO: Get a favicon.
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(cookieSession({name: 'session', keys: ['key1', 'key2']}));
 app.use(logger('dev'));
