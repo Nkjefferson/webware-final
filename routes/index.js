@@ -81,8 +81,6 @@ router.get('/proposal', function (req, res, next) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.end(fs.readFileSync('proposal.txt'));
-  return;
   var role = req.session.role || false;
   var name = req.session.name || false;
 
