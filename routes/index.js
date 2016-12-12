@@ -10,30 +10,43 @@ var db = require('../database/db');
 const professor_role = 'professor';
 const student_role = 'student';
 
+function set_local_db(req, callback) {
+  var cb = function() {
+    req.session.db_content = GLOBAL.db_content;
+    callback();
+  };
+  db.refresh_db_content(cb);
+}
+
 /*
 GET home page.
  */
 router.get('/', function(req, res, next) {
-  if (meets_required_role(req)) {
+  var callback = function() {
+    if (meets_required_role(req)) {
+      // Already logged in.
+      res.redirect('/' + req.session.role);
+    } else {
+      // Not already logged in.
+      res.render('login', {logged_in: false});
+    }
+  };
 
-
-    // Already logged in.
-    res.redirect('/' + req.session.role);
-  } else {
-
-    // Not already logged in.
-    res.render('login', {logged_in: false});
-  }
+  set_local_db(req, callback);
 });
 
 router.get('/courses', function(req, res, next) {
-  if (meets_required_role(req)) {
-    // Already logged in.
-    res.redirect('/' + req.session.role + '/courses');
-  } else {
-    // Not already logged in.
-    res.render('login', {logged_in: false});
-  }
+  var callback = function() {
+    if (meets_required_role(req)) {
+      // Already logged in.
+      res.redirect('/' + req.session.role + '/courses');
+    } else {
+      // Not already logged in.
+      res.render('login', {logged_in: false});
+    }
+  };
+
+  set_local_db(req, callback);
 });
 
 
@@ -41,47 +54,83 @@ router.get('/courses', function(req, res, next) {
 Professor home page.
  */
 router.get('/professor', function (req, res, next) {
-  if (meets_required_role(req, professor_role)) {
+  // TODO
+  res.redirect('/');
+});
 
-    // Login to existing account, or create a new one.
-    //db.login_or_register_professor(req, res);
+// View a single professor's profile.
+router.post('/professor', function(req, res, next) {
+  var professor_id = parseInt(req.body.professor_id);
+
+  var professor = null;
+  for (var i = 0; i < GLOBAL.db_content.professors.length; i++) {
+    console.log(GLOBAL.db_content.professors[i]);
+    console.log(professor_id);
+    console.log('\n');
+    if (GLOBAL.db_content.professors[i].id == professor_id) {
+      professor = GLOBAL.db_content.professors[i];
+      break;
+    }
   }
 
-  else {
-    // Not logged in.
-    res.redirect('/');
+  if (professor === null) {
+    res.status(500).json({success: false})
   }
+
+  res.render('view_professor', {
+    logged_in: true,
+    name: professor.name,
+    profile: professor.profile,
+    img_url: professor.img_url
+  });
 });
 
 /*
 Student home page.
  */
 router.get('/student', function (req, res, next) {
-  if (meets_required_role(req, student_role)) {
+  var callback = function() {
+    if (meets_required_role(req, student_role)) {
+      var callback = function() {
+        res.render('student', {
+          logged_in: true,
+          name: req.session.name,
+          profile: req.session.profile ? req.session.profile.replace(/(\r)?\n/g, '<br />') : '',
+          img_url: req.session.img_url
+        });
+      };
+      db.login_or_register_student(req, callback);
+    }
 
-    // Login to existing account, or create a new one.
-    db.login_or_register_student(req, res);
-  }
+    else {
+      // Not logged in.
+      res.redirect('/');
+    }
+  };
 
-  else {
-    // Not logged in.
-    res.redirect('/');
-  }
+  set_local_db(req, callback);
 });
 
 /*
 Student view courses page.
  */
 router.get('/student/courses', function (req, res, next) {
-  if (meets_required_role(req, student_role)) {
-    // Grab list of courses from database.
-    db.get_student_courses(req, res);
-  }
+  var callback = function() {
+    if (meets_required_role(req, student_role)) {
+      db.get_student_courses(req);
+      res.render('student_courses', {
+        logged_in: true,
+        courses: req.session.courses
+      });
+    }
 
-  else {
-    // Not logged in.
-    res.redirect('/');
-  }
+    else {
+      // Not logged in.
+      res.redirect('/');
+    }
+  };
+
+  set_local_db(req, callback);
 });
 
 /*
