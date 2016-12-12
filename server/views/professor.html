@@ -1,17 +1,17 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Student Profile
+Professor Profile
 {% endblock %}
 
 {% block js %}
-<script type="text/javascript" src="/js/student.js"></script>
+<script type="text/javascript" src="/js/professor.js"></script>
 {% endblock %}
 
 {% block content %}
 <div class='row'>
   <div class='col-md-6 col-md-offset-3'>
-    <h1 class='center'>Welcome, {{ currentStudent.name }}!</h1>
+    <h1 class='center'>Welcome, {{ currentProfessor.name }}!</h1>
     <hr/>
   </div>
 </div>
@@ -19,8 +19,8 @@ Student Profile
 <div class='row' id="view_section">
   <div class='col-md-4 col-md-offset-3'>
     <p> <strong>Profile</strong> </p>
-    {% if currentStudent.profile %}
-    <p>{{ currentStudent.profile }}</p>
+    {% if currentProfessor.profile %}
+    <p>{{ currentProfessor.profile }}</p>
     {% else %}
     <p>
       <em>You have no profile!</em>
@@ -29,24 +29,24 @@ Student Profile
     <button id="edit_button" class="btn btn-default">Edit Profile</button>
   </div>
   <div class="col-md-2">
-    {% if currentStudent.img_url %}
-    <img class="profile-pic img-responsive" src="{{ currentStudent.img_url }}">
+    {% if currentProfessor.img_url %}
+    <img class="profile-pic img-responsive" src="{{ currentProfessor.img_url }}">
     {% endif %}
   </div>
 </div>
 
 <div id="edit_section" class='row' hidden>
   <div class='col-md-6 col-md-offset-3'>
-    <form action='/student' method='post'>
+    <form action='/professor' method='post'>
       <div class='form-group'>
         <label>Profile Text</label>
         <textarea class="form-control" rows="3" id="profile_text_input"
-                  name="profile">{{ currentStudent.profile }}</textarea>
+                  name="profile">{{ currentProfessor.profile }}</textarea>
       </div>
       <div class='form-group'>
         <label>Image URL</label>
         <input type='text' class='form-control' id='img_url_input'
-               name='img_url' value="{{ currentStudent.img_url }}">
+               name='img_url' value="{{ currentProfessor.img_url }}">
       </div>
       <button type='submit' class='btn btn-success btn-block'>Submit</button>
     </form>
