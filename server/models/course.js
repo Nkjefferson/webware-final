@@ -1,13 +1,13 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var User = sequelize.define('User', {
-    email: DataTypes.STRING
+  var Course = sequelize.define('Course', {
+    name: DataTypes.TEXT
   }, {
     classMethods: {
       associate: function(models) {
-        User.hasMany(models.Todo);
+        Course.belongsTo(models.Professor);
       }
     }
   });
-  return User;
+  return Course;
 };

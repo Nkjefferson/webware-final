@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+{% block title %}{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-4 col-md-offset-4">
+    <h1 class="center"> Log In </h1>
+    <hr>
+    <form action='/login' method='post'>
+      <div class='form-group'>
+        <label> Username </label>
+        <input type='text' class='form-control' id='name_input' name='name'>
+      </div>
+      <div class='fieldset form-group'>
+        <div class='form-check'>
+          <label class='form-check-label'>
+            <input type='radio' class='form-checkinput' name='role' id='professor' value='professor' checked>
+            Professor
+          </label>
+        </div>
+        <div class='form-check'>
+          <label class='form-check-label'>
+            <input type='radio' class='form-checkinput' name='role' id='student' value='student' checked>
+            Student
+          </label>
+        </div>
+      </div>
+      <button type='submit' class='btn btn-primary btn-block'>Log In</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
