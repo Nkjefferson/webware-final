@@ -7,7 +7,10 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
-        Student.hasMany(models.Course, {as: 'Courses'});
+        Student.belongsToMany(models.Course,
+            {through: 'Registration'},
+            {as: 'Courses'}
+        );
       }
     }
   });

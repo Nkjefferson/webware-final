@@ -38,12 +38,52 @@ router.get('/', function(req, res) {
 
 router.get('/courses', function (req, res) {
   if (req.session.currentStudent) {
-  } else if (req.session.currentProfessor) {
-    res.render('professor_courses', {
+
+    res.render('student_courses', {
       logged_in: true,
-      currentProfessor: req.session.currentProfessor,
-    })
+      currentProfessor: req.session.currentStudent,
+    });
+  } else if (req.session.currentProfessor) {
+    // Get list of courses belonging to professor.
+    var professor_id = req.session.currentProfessor.id;
+    models.Course.findAll({
+      where: {
+        ProfessorId: professor_id,
+      }
+    }).then(function (courses) {
+      res.render('professor_courses', {
+        logged_in: true,
+        currentProfessor: req.session.currentProfessor,
+        courses: courses,
+      });
+    });
+
+  } else {
+    res.status(500);
   }
+});
+
+router.post('/courses/add', function(req, res) {
+  var professor_id = req.session.currentProfessor.id;
+  var course_name = req.body.name;
+
+  models.Course.find({
+    where: {
+      name: course_name,
+      ProfessorId: professor_id,
+    }
+  }).then(function(course) {
+    if (course) {
+      res.redirect('/courses');
+    } else {
+      models.Course.create({
+        name: course_name,
+        ProfessorId: professor_id,
+      }).then(function(course) {
+        res.redirect('/courses');
+      });
+    }
+  })
 });
 
 
