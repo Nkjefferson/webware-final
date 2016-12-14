@@ -7,6 +7,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var swig = require('swig');
 var cookieSession = require('cookie-session');
+var nunjucks = require('nunjucks')
 
 
 
@@ -18,14 +19,23 @@ var routes = require('./routes/index.js');
 var app = express();
 
 
-// *** view engine *** //
+//*** view engine *** //
 var swig = new swig.Swig();
 app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
 
+// View engine setup.
+// nunjucks.configure('views', {
+//     autoescape: true,
+//     express: app
+// });
+// app.set('views', path.join(__dirname, 'server/views'));
+// app.engine( 'html', nunjucks.render ) ;
+// app.set('view engine', 'html');
+
 
 // *** static directory *** //
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'views' ));
 
 
 // *** config middleware *** //

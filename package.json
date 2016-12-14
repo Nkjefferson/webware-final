@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "export DATABASE_URL=postgres://localhost:5432/webware; supervisor --extensions 'node,js,/bin/www,html,css,client,server' ./server/bin/www"
+    "start": "export DATABASE_URL=postgres://dotooizxzqvdva:4Ls5P_fmj03gfK4BlJDrWg6d2K@ec2-54-227-250-80.compute-1.amazonaws.com:5432/d3qeftjnshumcp; supervisor --extensions 'node,js,/bin/www,html,css,client,server' ./server/bin/www"
   },
   "dependencies": {
     "body-parser": "~1.15.1",
