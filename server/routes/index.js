@@ -38,11 +38,17 @@ router.get('/', function(req, res) {
 
 router.get('/courses', function (req, res) {
   if (req.session.currentStudent) {
-
-    res.render('student_courses', {
-      logged_in: true,
-      currentProfessor: req.session.currentStudent,
+    models.Student.find({where: {id: req.session.currentStudent.id}}).then(function(student) {
+      student.getCourses().then(function(courses) {
+        //for(var i = 0; i < courses.length; i++) console.log(courses[i].name)
+        res.render('student_courses', {
+          courses: courses,
+          logged_in: true,
+          currentStudent: req.session.currentStudent,
+        });
+      });
     });
+    
   } else if (req.session.currentProfessor) {
     // Get list of courses belonging to professor.
     var professor_id = req.session.currentProfessor.id;
@@ -89,20 +95,6 @@ router.post('/courses/add', function(req, res) {
 router.get('/courses/all', function(req, res) {
   models.Course.findAll({}).then(function (courses) {
 
-    var fucked_object = {
-      0: 'e',
-      1: 'a',
-      2: 'b',
-      4: 'c'
-    };
-
-    for (var i = 0; i < ("" + fucked_object).length; i++) {
-      console.log(fucked_object[i]);
-    }
-
-    res.status(500);
-    return;
-
     res.render('all_courses', {
       courses: courses,
       currentStudent: req.session.currentStudent,
@@ -131,6 +123,30 @@ router.post('/courses/all', function(req, res) {
   });
 });
 
+router.post('/courses/drop', function(req, res) {
+  var course_id = req.body.course_id;
+  var student_id = req.body.student_id;
+
+  models.Course.find({
+    where: {
+      id: course_id
+    }
+  }).then(function(course) {
+    models.Student.find({
+      where: {
+        id: student_id
+      }
+    }).then(function(student) {
+      course.removeStudent(student);
+      res.json(course);
+    });
+  });
+});
+/*
+router.get('/courses', function(req, res){
+  console.log(req.session.currentStudent.Courses);
+});
+*/
 router.post('/login', function(req, res) {
   if (req.body.role === 'student') {
     // Get or create student instance, save it to session.
