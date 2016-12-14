@@ -1,54 +1,54 @@
-{% extends "layout.html" %}
+<!--{% extends "layout.html" %}-->
 
-{% block title %}
-Courses: Available
-{% endblock %}
+<!--{% block title %}-->
+<!--Courses: Available-->
+<!--{% endblock %}-->
 
-{% block js %}
-<script type="text/javascript">
-$(document).on('ready', function() {
-  $('.course-button').on('click', function(e) {
-    var course_id = $(this).find('button').attr('courseid');
+<!--{% block js %}-->
+<!--<script type="text/javascript">-->
+<!--$(document).on('ready', function() {-->
+  <!--$('.course-button').on('click', function(e) {-->
+    <!--var course_id = $(this).find('button').attr('courseid');-->
 
-    $.ajax({
-      type: "POST",
-      url: "/courses/all",
-      data: {
-        student_id: {{currentStudent.id}},
-        course_id: course_id,
-      },
-      success: function(data) {
+    <!--$.ajax({-->
+      <!--type: "POST",-->
+      <!--url: "/courses/all",-->
+      <!--data: {-->
+        <!--student_id: {{currentStudent.id}},-->
+        <!--course_id: course_id,-->
+      <!--},-->
+      <!--success: function(data) {-->
 
-      },
-      dataType: 'json'
-    });
+      <!--},-->
+      <!--dataType: 'json'-->
+    <!--});-->
 
-  });
-});
-</script>
-{% endblock %}
+  <!--});-->
+<!--});-->
+<!--</script>-->
+<!--{% endblock %}-->
 
-{% block content %}
-<div class='row'>
-  <div class='col-md-6 col-md-offset-3'>
-    <h1 class='center'>All Courses</h1>
-    <hr/>
-  </div>
-</div>
+<!--{% block content %}-->
+<!--<div class='row'>-->
+  <!--<div class='col-md-6 col-md-offset-3'>-->
+    <!--<h1 class='center'>All Courses</h1>-->
+    <!--<hr/>-->
+  <!--</div>-->
+<!--</div>-->
 
-<div id="view_section" class='row'>
-  {% for course in courses %}
-  <div class='col-md-6 col-md-offset-3'>
-    <div class="row">
-      <div class="col-md-10">
-        {{course.name}}
-      </div>
-      <div class="col-md-2 course-button">
-        <button class="btn btn-primary btn-xs btn-block" courseid="{{course.id}}">Register</button>
-      </div>
-    </div>
-    <br>
-  </div>
-  {% endfor %}
-</div>
-{% endblock %}
+<!--<div id="view_section" class='row'>-->
+  <!--{% for course in courses %}-->
+  <!--<div class='col-md-6 col-md-offset-3'>-->
+    <!--<div class="row">-->
+      <!--<div class="col-md-10">-->
+        <!--{{course.name}}-->
+      <!--</div>-->
+      <!--<div class="col-md-2 course-button">-->
+        <!--<button class="btn btn-primary btn-xs btn-block" courseid="{{course.id}}">Register</button>-->
+      <!--</div>-->
+    <!--</div>-->
+    <!--<br>-->
+  <!--</div>-->
+  <!--{% endfor %}-->
+<!--</div>-->
+<!--{% endblock %}-->

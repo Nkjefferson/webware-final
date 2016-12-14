@@ -1,13 +1,14 @@
 {% extends 'layout.html' %}
-{% block title %}{% endblock %}
+{% block title %}Login{% endblock %}
 {% block content %}
 <div class="row">
   <div class="col-md-4 col-md-offset-4">
-    <h1 class="center"> Log In </h1>
+    <h1>Log In</h1>
+    <p>An account will be created for you automatically.</p>
     <hr>
     <form action='/login' method='post'>
       <div class='form-group'>
-        <label> Username </label>
+        <label>Username</label>
         <input type='text' class='form-control' id='name_input' name='name'>
       </div>
       <div class='fieldset form-group'>

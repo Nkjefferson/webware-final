@@ -1,0 +1,32 @@
+<h4>Courses</h4>
+<div id="courses">
+  {% for course in courses %}
+  <div class="row left">
+    <div class="col-md-8">
+      <button class="course_button btn btn-block btn-link left" course_id="{{course.id}}">
+        {{course.name}}
+      </button>
+      <br/>
+    </div>
+    <div class="col-md-4">
+      <button class="course_delete_button btn btn-block btn-danger" course_id="{{course.id}}">
+        Delete
+      </button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<hr/>
+<h4>Add Course</h4>
+
+<form class="form-horizontal" id="add_course_form">
+  <div class="form-group">
+    <input type="number" name="professor_id" value="{{id}}" hidden/>
+    <div class="col-md-8">
+      <input type="text" class="form-control" name="name" placeholder="Name">
+    </div>
+    <div class="col-md-4">
+      <button type="submit" class="btn btn-success btn-block">Create</button>
+    </div>
+  </div>
+</form>
