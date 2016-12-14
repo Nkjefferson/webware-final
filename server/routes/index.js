@@ -86,6 +86,50 @@ router.post('/courses/add', function(req, res) {
   })
 });
 
+router.get('/courses/all', function(req, res) {
+  models.Course.findAll({}).then(function (courses) {
+
+    var fucked_object = {
+      0: 'e',
+      1: 'a',
+      2: 'b',
+      4: 'c'
+    };
+
+    for (var i = 0; i < ("" + fucked_object).length; i++) {
+      console.log(fucked_object[i]);
+    }
+
+    res.status(500);
+    return;
+
+    res.render('all_courses', {
+      courses: courses,
+      currentStudent: req.session.currentStudent,
+      logged_in: true
+    });
+  });
+});
+
+router.post('/courses/all', function(req, res) {
+  var course_id = req.body.course_id;
+  var student_id = req.body.student_id;
+
+  models.Course.find({
+    where: {
+      id: course_id
+    }
+  }).then(function(course) {
+    models.Student.find({
+      where: {
+        id: student_id
+      }
+    }).then(function(student) {
+      course.addStudent(student);
+      res.json(course);
+    });
+  });
+});
 
 router.post('/login', function(req, res) {
   if (req.body.role === 'student') {
