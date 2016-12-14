@@ -3,69 +3,79 @@ var router = express.Router();
 var models = require('../models/index');
 
 
+function update_session_user_model(req, res, callback) {
+  if (req.session.currentStudent) {
+    models.Student.find({
+      where: {
+        id: req.session.currentStudent.id
+      },
+      include: [{all: true}]
+    }).then(function(student) {
+      req.session.currentStudent = student;
+      callback(student, true);
+    });
+
+  } else if (req.session.currentProfessor) {
+    models.Professor.find({
+      where: {
+        id: req.session.currentProfessor.id
+      },
+      include: [{all: true}]
+    }).then(function(professor) {
+      req.session.currentProfessor = professor;
+      callback(professor, false);
+    });
+  } else {
+    res.render('login');
+  }
+}
+
 // This should hopefully not happen much.
 // Force the database schema to match the models.
 router.get('/sync', function (req, res) {
-  models.sequelize.sync({force: true});
-  res.status(200).json({'status': 'sync_complete'});
+  models.sequelize.sync({force: true}).then(function() {
+    res.status(200).json({sync: 'done'});
+  });
+});
+
+// Just go to your home!
+router.get('/', function(req, res) {
+    res.redirect('/home');
 });
 
 // Redirect index to either student homepage, professor homepage, or login.
-router.get('/', function(req, res) {
-
-  // Already logged in student.
-  if (req.session.currentStudent) {
-    res.render('student', {
-      logged_in: true,
-      currentStudent: req.session.currentStudent,
+router.get('/home', function(req, res) {
+  update_session_user_model(req, res, function(user, is_student) {
+    res.render('home', {
+      student_role: is_student,
+      id: user.id,
+      name: user.name,
+      profile: user.profile,
+      img_url: user.img_url,
+      courses: user.Courses
     });
-  }
-
-  // Already logged in professor.
-  else if (req.session.currentProfessor) {
-    res.render('professor', {
-      logged_in: true,
-      currentProfessor: req.session.currentProfessor,
-    });
-  }
-
-  // Not yet logged in.
-  else {
-    res.render('login');
-  }
+  });
 });
 
-router.get('/courses', function (req, res) {
-  if (req.session.currentStudent) {
-    models.Student.find({where: {id: req.session.currentStudent.id}}).then(function(student) {
-      student.getCourses().then(function(courses) {
-        //for(var i = 0; i < courses.length; i++) console.log(courses[i].name)
-        res.render('student_courses', {
-          courses: courses,
-          logged_in: true,
-          currentStudent: req.session.currentStudent,
-        });
-      });
-    });
-    
-  } else if (req.session.currentProfessor) {
-    // Get list of courses belonging to professor.
-    var professor_id = req.session.currentProfessor.id;
-    models.Course.findAll({
+router.get('/courses/:id', function (req, res) {
+  update_session_user_model(req, res,  function(user, is_student) {
+    models.Course.find({
       where: {
-        ProfessorId: professor_id,
-      }
-    }).then(function (courses) {
-      res.render('professor_courses', {
-        logged_in: true,
-        currentProfessor: req.session.currentProfessor,
-        courses: courses,
-      });
+        id: req.params.id
+      },
+      include: [{all: true}]
+    }).then(function(course) {
+      res.render('course', {
+        name: course.name,
+        course_id: course.id,
+        created: course.createdAt.toString(),
+        user_id: user.id,
+        students: course.Students,
+        student_role: is_student,
+        professor: course.Professor
+      })
     });
-
-  } else {
-    res.status(500);
-  }
+  });
 });
 
 router.post('/courses/add', function(req, res) {
@@ -176,18 +186,19 @@ router.post('/login', function(req, res) {
     // Get or create student instance, save it to session.
     models.Student.find({
       where: {
-        name: req.body.name,
-      }
+        name: req.body.name
+      },
+      include: [{all: true}]
     }).then(function(student) {
       if (student) {
         req.session.currentStudent = student;
-        res.redirect('/');
+        res.redirect('/home');
       } else {
         models.Student.create({
           name: req.body.name,
         }).then(function(student) {
           req.session.currentStudent = student;
-          res.redirect('/');
+          res.redirect('/home');
         });
       }
     });

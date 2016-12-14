@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block title %}
+View Course
+{% endblock %}
+
+{% block js %}
+{% if student_role %}
+  <script type="text/javascript" src="/js/student_course.js"></script>
+{% else %}
+  <script type="text/javascript" src="/js/professor_course.js"></script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <nav class="navbar navbar-default navbar-static-top">
+    <div class="container-fluid">
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li><a>Welcome to WebBanner</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href='/logout'>Log Out</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="col-md-4">
+    {% if student_role %}
+      {# include 'student_course_sidebar.html' #}
+    {% else %}
+      <h4>Professor</h4>
+      <p>{{professor.name}}</p>
+      <hr/>
+      <h4>Created</h4>
+      <p>{{created}}</p>
+      <hr/>
+      <button class="btn btn-success btn-block">Play name game</button>
+    {% endif %}
+  </div>
+  <div class="col-md-8">
+    <h1>{{name}}</h1>
+    <hr/>
+    {% for student in students %}
+    <div class="row">
+      <div class="col-md-8">
+        {{student.name}}
+      </div>
+      <div class="col-md-4">
+        {{student.id}}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

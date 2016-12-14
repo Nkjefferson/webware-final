@@ -6,6 +6,9 @@ body {
   text-align: center;
 }
 
+.left, .left button.left {
+  text-align: left;
+}
 
 .right {
   float: right;
