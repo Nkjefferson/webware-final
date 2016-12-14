@@ -93,14 +93,39 @@ router.post('/courses/add', function(req, res) {
 });
 
 router.get('/courses/all', function(req, res) {
-  models.Course.findAll({}).then(function (courses) {
-
-    res.render('all_courses', {
-      courses: courses,
-      currentStudent: req.session.currentStudent,
-      logged_in: true
+  var student_id = req.session.currentStudent.id;
+  models.Student.find({where: {id: student_id}}).then(function(student) {
+    student.getCourses().then(function(student_courses) {
+      var student_course_ids = student_courses.map(function(a_course) {
+        return a_course.id;
+      });
+      console.log(student_course_ids);
+      models.Course.findAll({
+        where: {
+          id: {
+            $notIn: student_course_ids,
+          }
+        }
+      }).then(function(non_student_courses) {
+        console.log(non_student_courses);
+        res.render('all_courses', {
+          courses: non_student_courses,
+          currentStudent: req.session.currentStudent,
+          logged_in: true
+        });
+      });
     });
   });
+
+  // models.Course.findAll({}).then(function (courses) {
+
+  //   res.render('all_courses', {
+  //     courses: courses,
+  //     currentStudent: req.session.currentStudent,
+  //     logged_in: true
+  //   });
+  // });
+
 });
 
 router.post('/courses/all', function(req, res) {
