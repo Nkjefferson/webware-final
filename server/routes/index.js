@@ -10,7 +10,6 @@ router.get('/sync', function (req, res) {
   res.status(200).json({'status': 'sync_complete'});
 });
 
-
 // Redirect index to either student homepage, professor homepage, or login.
 router.get('/', function(req, res) {
 
@@ -38,11 +37,17 @@ router.get('/', function(req, res) {
 
 router.get('/courses', function (req, res) {
   if (req.session.currentStudent) {
-
-    res.render('student_courses', {
-      logged_in: true,
-      currentProfessor: req.session.currentStudent,
+    models.Student.find({where: {id: req.session.currentStudent.id}}).then(function(student) {
+      student.getCourses().then(function(courses) {
+        //for(var i = 0; i < courses.length; i++) console.log(courses[i].name)
+        res.render('student_courses', {
+          courses: courses,
+          logged_in: true,
+          currentStudent: req.session.currentStudent,
+        });
+      });
     });
+    
   } else if (req.session.currentProfessor) {
     // Get list of courses belonging to professor.
     var professor_id = req.session.currentProfessor.id;
@@ -86,7 +91,86 @@ router.post('/courses/add', function(req, res) {
   })
 });
 
+router.get('/courses/all', function(req, res) {
+  var student_id = req.session.currentStudent.id;
+  models.Student.find({where: {id: student_id}}).then(function(student) {
+    student.getCourses().then(function(student_courses) {
+      var student_course_ids = student_courses.map(function(a_course) {
+        return a_course.id;
+      });
+      console.log(student_course_ids);
+      models.Course.findAll({
+        where: {
+          id: {
+            $notIn: student_course_ids,
+          }
+        }
+      }).then(function(non_student_courses) {
+        console.log(non_student_courses);
+        res.render('all_courses', {
+          courses: non_student_courses,
+          currentStudent: req.session.currentStudent,
+          logged_in: true
+        });
+      });
+    });
+  });
 
+  // models.Course.findAll({}).then(function (courses) {
+
+  //   res.render('all_courses', {
+  //     courses: courses,
+  //     currentStudent: req.session.currentStudent,
+  //     logged_in: true
+  //   });
+  // });
+
+});
+
+router.post('/courses/all', function(req, res) {
+  var course_id = req.body.course_id;
+  var student_id = req.body.student_id;
+
+  models.Course.find({
+    where: {
+      id: course_id
+    }
+  }).then(function(course) {
+    models.Student.find({
+      where: {
+        id: student_id
+      }
+    }).then(function(student) {
+      course.addStudent(student);
+      res.json(course);
+    });
+  });
+});
+
+router.post('/courses/drop', function(req, res) {
+  var course_id = req.body.course_id;
+  var student_id = req.body.student_id;
+
+  models.Course.find({
+    where: {
+      id: course_id
+    }
+  }).then(function(course) {
+    models.Student.find({
+      where: {
+        id: student_id
+      }
+    }).then(function(student) {
+      course.removeStudent(student);
+      res.json(course);
+    });
+  });
+});
+/*
+router.get('/courses', function(req, res){
+  console.log(req.session.currentStudent.Courses);
+});
+*/
 router.post('/login', function(req, res) {
   if (req.body.role === 'student') {
     // Get or create student instance, save it to session.

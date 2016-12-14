@@ -13,6 +13,7 @@ var nunjucks = require('nunjucks')
 
 // *** routes *** //
 var routes = require('./routes/index.js');
+var api_routes = require('./routes/api.js');
 
 
 // *** express instance *** //
@@ -49,6 +50,7 @@ app.use(express.static(path.join(__dirname, '../client')));
 
 // *** main routes *** //
 app.use('/', routes);
+app.use('/api/', api_routes);
 
 
 // catch 404 and forward to error handler
