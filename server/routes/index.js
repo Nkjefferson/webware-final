@@ -10,7 +10,6 @@ router.get('/sync', function (req, res) {
   res.status(200).json({'status': 'sync_complete'});
 });
 
-
 // Redirect index to either student homepage, professor homepage, or login.
 router.get('/', function(req, res) {
 
