@@ -156,6 +156,24 @@ router.put('/students/:id', function(req, res) {
   });
 });
 
+router.put('/courses/:id', function(req, res) {
+  models.Course.find({
+    where: {
+      id: req.params.id
+    },
+    include: [{all: true}]
+  }).then(function(course) {
+    if(course){
+      course.updateAttributes({
+        description: req.body.description,
+        name: req.body.name
+      }).then(function(course) {
+        res.json(course);
+      });
+    }
+  });
+});
+
 /*
 DELETE objects.
  */

@@ -90,7 +90,6 @@ router.post('/courses/add', function(req, res) {
   models.Course.find({
     where: {
       name: course_name,
-      description: course_description,
       ProfessorId: professor_id,
     }
   }).then(function(course) {

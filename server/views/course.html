@@ -5,6 +5,7 @@ View Course
 {% endblock %}
 
 {% block js %}
+  <script type="text/javascript" src="/js/course.js"></script>
 {% if student_role %}
   <script type="text/javascript" src="/js/student_course.js"></script>
 {% else %}
@@ -45,21 +46,21 @@ View Course
       <div id="edit_course" hidden>
       <form id="edit_form">
         <div class='form-group'>
-          <input type="text" value="{{id}}" name="id" hidden/>
+          <input type="text" value="{{course_id}}" name="id" hidden/>
           <h4>Name</h4>
           <input type='text' class='form-control name' name='name' value="{{name}}">
           <h4>Profile</h4>
-          <textarea class="form-control profile" rows="3"  name="profile">{{description}}</textarea>
+          <textarea class="form-control profile" rows="3"  name="description">{{description}}</textarea>
         </div>
         <button type='submit' class='btn btn-success btn-block'>Submit</button>
       </form>
     </div>
-      <button id="edit_button" class="btn btn-primary btn-block" onclick="$('#edit_course').show('slow');$('#edit_button').hide('slow');">Edit Course</button>
+      <button id="edit_button" class="btn btn-primary btn-block">Edit Course</button>
       <button class="btn btn-success btn-block">Play name game</button>
     {% endif %}
   </div>
   <div class="col-md-8">
-    <h1>{{name}}</h1>
+    <h1 id="view_course_name">{{name}}</h1>
     <hr/>
     {% if student_role %}
       <h3>Course Description:</h3>
