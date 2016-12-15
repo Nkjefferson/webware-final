@@ -302,7 +302,7 @@ router.post('/professor', function(req, res) {
   });
 });
 
-router.get('/student/:id', function(req, res){
+router.get('/students/:id', function(req, res){
   models.Student.find({
     where: {
       id: req.params.id
