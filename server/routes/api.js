@@ -52,7 +52,7 @@ router.post('/professors', function(req, res) {
     },
     include: [{all: true}]
   }).spread(function(professor, created) {
-    res.json(professor);
+    res.json(professor.get({plain: true}));
   }).catch(function(error) {
     res.status(500).end();
   });
@@ -67,7 +67,7 @@ router.post('/students', function(req, res) {
     },
     include: [{all: true}]
   }).spread(function(student, created) {
-    res.json(student);
+    res.json(student.get({plain: true}));
   }).catch(function(error) {
     res.status(500).end();
   });
@@ -84,7 +84,7 @@ router.post('/courses', function(req, res) {
     },
     include: [{all: true}]
   }).spread(function(course, created) {
-    res.json(course);
+    res.json(course.get({plain: true}));
   }).catch(function(error) {
     res.status(500).end();
   });
@@ -106,7 +106,7 @@ router.post('/registrations', function(req, res) {
       include: [{all: true}]
     }).then(function(course) {
       course.addStudent(student);
-      res.json(course);
+      res.json(course.get({plain: true}));
     }).catch(function(error) {
       res.status(500).end();
     });
@@ -131,7 +131,7 @@ router.put('/professors/:id', function(req, res) {
         img_url: req.body.img_url
       }).then(function(professor) {
         req.session.currentProfessor = professor;
-        res.json(professor);
+        res.json(professor.get({plain: true}));
       });
     }
   });
@@ -150,7 +150,7 @@ router.put('/students/:id', function(req, res) {
         img_url: req.body.img_url
       }).then(function(student) {
         req.session.currentStudent = student;
-        res.json(student);
+        res.json(student.get({plain: true}));
       });
     }
   });
@@ -168,7 +168,7 @@ router.put('/courses/:id', function(req, res) {
         description: req.body.description,
         name: req.body.name
       }).then(function(course) {
-        res.json(course);
+        res.json(course.get({plain: true}));
       });
     }
   });
@@ -194,7 +194,7 @@ router.delete('/registrations', function(req, res) {
       include: [{all: true}]
     }).then(function(course) {
       course.removeStudent(student);
-      res.json(course);
+      res.json(course.get({plain: true}));
     }).catch(function(error) {
       res.status(500).end();
     });

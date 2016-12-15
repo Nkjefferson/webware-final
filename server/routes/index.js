@@ -14,7 +14,7 @@ function update_session_user_model(req, res, callback) {
       },
       include: [{all: true}]
     }).then(function(student) {
-      req.session.currentStudent = student;
+      req.session.currentStudent = student.get({plain: true});
       callback(student, true);
     });
 
@@ -25,7 +25,7 @@ function update_session_user_model(req, res, callback) {
       },
       include: [{all: true}]
     }).then(function(professor) {
-      req.session.currentProfessor = professor;
+      req.session.currentProfessor = professor.get({plain: true});
       callback(professor, false);
     });
   } else {
@@ -68,15 +68,16 @@ router.get('/courses/:id', function (req, res) {
       },
       include: [{all: true}]
     }).then(function(course) {
+      var c = course.get({plain: true});
       res.render('course', {
-        name: course.name,
-        course_id: course.id,
-        description: course.description,
-        created: course.createdAt.toString(),
+        name: c.name,
+        course_id: c.id,
+        description: c.description,
+        created: c.createdAt.toString(),
         user_id: user.id,
-        students: course.Students,
+        students: c.Students,
         student_role: is_student,
-        professor: course.Professor
+        professor: c.Professor
       })
     });
   });
@@ -89,10 +90,11 @@ router.get('/courses/:id/game', function(req, res) {
     },
     include: [{all: true}]
   }).then(function(course) {
+    var c = course.get({plain: true});
     res.render('name_game', {
-      course: course,
-      students: course.Students,
-      students_count: course.Students.length
+      course: c,
+      students: c.Students,
+      students_count: c.Students.length
     });
   });
 });
@@ -120,42 +122,6 @@ router.post('/courses/add', function(req, res) {
       });
     }
   })
-});
-
-router.get('/courses/all', function(req, res) {
-  var student_id = req.session.currentStudent.id;
-  models.Student.find({where: {id: student_id}}).then(function(student) {
-    student.getCourses().then(function(student_courses) {
-      var student_course_ids = student_courses.map(function(a_course) {
-        return a_course.id;
-      });
-      console.log(student_course_ids);
-      models.Course.findAll({
-        where: {
-          id: {
-            $notIn: student_course_ids,
-          }
-        }
-      }).then(function(non_student_courses) {
-        console.log(non_student_courses);
-        res.render('all_courses', {
-          courses: non_student_courses,
-          currentStudent: req.session.currentStudent,
-          logged_in: true
-        });
-      });
-    });
-  });
-
-  // models.Course.findAll({}).then(function (courses) {
-
-  //   res.render('all_courses', {
-  //     courses: courses,
-  //     currentStudent: req.session.currentStudent,
-  //     logged_in: true
-  //   });
-  // });
-
 });
 
 router.post('/courses/all', function(req, res) {
@@ -193,15 +159,11 @@ router.post('/courses/drop', function(req, res) {
       }
     }).then(function(student) {
       course.removeStudent(student);
-      res.json(course);
+      res.json(course.get({plain: true}));
     });
   });
 });
-/*
-router.get('/courses', function(req, res){
-  console.log(req.session.currentStudent.Courses);
-});
-*/
+
 router.post('/login', function(req, res) {
   if (req.body.role === 'student') {
     // Get or create student instance, save it to session.
@@ -212,13 +174,13 @@ router.post('/login', function(req, res) {
       include: [{all: true}]
     }).then(function(student) {
       if (student) {
-        req.session.currentStudent = student;
+        req.session.currentStudent = student.get({plain: true});
         res.redirect('/home');
       } else {
         models.Student.create({
           name: req.body.name,
         }).then(function(student) {
-          req.session.currentStudent = student;
+          req.session.currentStudent = student.get({plain: true});
           res.redirect('/home');
         });
       }
@@ -233,13 +195,13 @@ router.post('/login', function(req, res) {
       }
     }).then(function(professor) {
       if (professor) {
-        req.session.currentProfessor = professor;
+        req.session.currentProfessor = professor.get({plain: true});
         res.redirect('/');
       } else {
         models.Professor.create({
           name: req.body.name,
         }).then(function(professor) {
-          req.session.currentProfessor = professor;
+          req.session.currentProfessor = professor.get({plain: true});
           res.redirect('/');
         });
       }
@@ -273,7 +235,7 @@ router.post('/student', function(req, res) {
         profile: req.body.profile,
         img_url: req.body.img_url,
       }).then(function(student) {
-        req.session.currentStudent = student;
+        req.session.currentStudent = student.get({plain: true});
         res.redirect('/');
       });
     }
@@ -294,7 +256,7 @@ router.post('/professor', function(req, res) {
         profile: req.body.profile,
         img_url: req.body.img_url,
       }).then(function(professor) {
-        req.session.currentProfessor = professor;
+        req.session.currentProfessor = professor.get({plain: true});
         res.redirect('/');
       });
     }

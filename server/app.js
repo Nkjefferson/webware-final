@@ -40,7 +40,7 @@ app.set('views', path.join(__dirname, 'views' ));
 
 
 // *** config middleware *** //
-app.use(cookieSession({name: 'session', keys: ['key1', 'key2']}));
+app.use(cookieSession({name: 'session', keys: ['key1', 'key2'], maxAge: 24 * 60 * 60 * 1000}));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
