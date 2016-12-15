@@ -6,11 +6,6 @@ View Course
 
 {% block js %}
   <script type="text/javascript" src="/js/course.js"></script>
-{% if student_role %}
-  <script type="text/javascript" src="/js/student_course.js"></script>
-{% else %}
-  <script type="text/javascript" src="/js/professor_course.js"></script>
-{% endif %}
 {% endblock %}
 
 {% block content %}
