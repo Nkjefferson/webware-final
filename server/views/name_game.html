@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Name Game
+{% endblock %}
+
+{% block js %}
+  <script type="text/javascript" src="/js/name_game.js"></script>
+{% endblock %}
+{% block content %}
+
+<div class="row">
+  <div class="col-md-6 col-md-offset-3 center">
+    <h2>{{course.name}}</h2>
+    <p>Flashcard name game</p>
+    <em>There are {{students_count}} students</em>
+  </div>
+</div>
+
+<div class="row" id="name_game">
+  <div class="student">
+  {% for student in students %}
+    {{student.name}}
+    {{student.img_url}}
+  {% endfor %}
+  </div>
+</div>
+{% endblock %}

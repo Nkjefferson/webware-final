@@ -82,6 +82,21 @@ router.get('/courses/:id', function (req, res) {
   });
 });
 
+router.get('/courses/:id/game', function(req, res) {
+  models.Course.find({
+    where: {
+      id: req.params.id
+    },
+    include: [{all: true}]
+  }).then(function(course) {
+    res.render('name_game', {
+      course: course,
+      students: course.Students,
+      students_count: course.Students.length
+    });
+  });
+});
+
 router.post('/courses/add', function(req, res) {
   var professor_id = req.session.currentProfessor.id;
   var course_name = req.body.name;
