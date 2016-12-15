@@ -287,6 +287,20 @@ router.post('/professor', function(req, res) {
   });
 });
 
+router.get('/student/:id', function(req, res){
+  models.Student.find({
+    where: {
+      id: req.params.id
+    }
+  }).then(function(student){
+    res.render('student', {
+      name: student.name,
+      profile: student.profile,
+      img_url: student.img_url,
+    });
+  });
+});
+
 //router.post('/api/students', function(req, res) {
 //  models.Student.find({
 //    where: {

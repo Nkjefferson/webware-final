@@ -69,7 +69,7 @@ View Course
       {% for student in students %}
       <div class="row">
         <div class="col-md-8">
-          {{student.name}}
+          <a href="/student/{{student.id}}">{{student.name}}</a>
         </div>
         <div class="col-md-4">
           {{student.id}}
