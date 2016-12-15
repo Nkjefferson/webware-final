@@ -3,6 +3,9 @@ var router = express.Router();
 var models = require('../models/index');
 
 
+// Check the session object to know if they're already logged in. If so,
+// update that object with the latest copy from the database. Otherwise
+// just render the login page.
 function update_session_user_model(req, res, callback) {
   if (req.session.currentStudent) {
     models.Student.find({
