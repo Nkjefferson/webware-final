@@ -71,6 +71,7 @@ router.get('/courses/:id', function (req, res) {
       res.render('course', {
         name: course.name,
         course_id: course.id,
+        description: course.description,
         created: course.createdAt.toString(),
         user_id: user.id,
         students: course.Students,
@@ -84,10 +85,12 @@ router.get('/courses/:id', function (req, res) {
 router.post('/courses/add', function(req, res) {
   var professor_id = req.session.currentProfessor.id;
   var course_name = req.body.name;
+  var course_description = req.body.description;
 
   models.Course.find({
     where: {
       name: course_name,
+      description: course_description,
       ProfessorId: professor_id,
     }
   }).then(function(course) {
@@ -96,6 +99,7 @@ router.post('/courses/add', function(req, res) {
     } else {
       models.Course.create({
         name: course_name,
+        description: course_description,
         ProfessorId: professor_id,
       }).then(function(course) {
         res.redirect('/courses');

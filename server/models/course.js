@@ -1,7 +1,8 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
   var Course = sequelize.define('Course', {
-    name: DataTypes.TEXT
+    name: DataTypes.TEXT,
+    description: DataTypes.TEXT
   }, {
     classMethods: {
       associate: function(models) {

@@ -28,31 +28,55 @@ View Course
     </div>
   </nav>
   <div class="col-md-4">
+    <h4>Professor</h4>
+    <p>{{professor.name}}</p>
+    <hr/>
     {% if student_role %}
       {# include 'student_course_sidebar.html' #}
-    {% else %}
-      <h4>Professor</h4>
-      <p>{{professor.name}}</p>
+      <img class="img_url img-responsive right" src="{{ professor.img_url }}">
+      <h4>Professor Details</h4>
+      <p class="profile">{{professor.profile}}</p>
       <hr/>
+    {% else %}
       <h4>Created</h4>
       <p>{{created}}</p>
       <hr/>
+      <h4>Course Description</h4>
+      <div id="edit_course" hidden>
+      <form id="edit_form">
+        <div class='form-group'>
+          <input type="text" value="{{id}}" name="id" hidden/>
+          <h4>Name</h4>
+          <input type='text' class='form-control name' name='name' value="{{name}}">
+          <h4>Profile</h4>
+          <textarea class="form-control profile" rows="3"  name="profile">{{description}}</textarea>
+        </div>
+        <button type='submit' class='btn btn-success btn-block'>Submit</button>
+      </form>
+    </div>
+      <button id="edit_button" class="btn btn-primary btn-block" onclick="$('#edit_course').show('slow');$('#edit_button').hide('slow');">Edit Course</button>
       <button class="btn btn-success btn-block">Play name game</button>
     {% endif %}
   </div>
   <div class="col-md-8">
     <h1>{{name}}</h1>
     <hr/>
-    {% for student in students %}
-    <div class="row">
-      <div class="col-md-8">
-        {{student.name}}
+    {% if student_role %}
+      <h3>Course Description:</h3>
+      <p class="profile">{{description}}</p>
+    {% else %}
+      <h3>Roster</h3>
+      {% for student in students %}
+      <div class="row">
+        <div class="col-md-8">
+          {{student.name}}
+        </div>
+        <div class="col-md-4">
+          {{student.id}}
+        </div>
       </div>
-      <div class="col-md-4">
-        {{student.id}}
-      </div>
-    </div>
-    {% endfor %}
+      {% endfor %}
+    {% endif %}
   </div>
 </div>
 {% endblock %}
