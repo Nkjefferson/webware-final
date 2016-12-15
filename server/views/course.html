@@ -45,7 +45,7 @@ View Course
           <h4>Name</h4>
           <input type='text' class='form-control name' name='name' value="{{name}}">
           <h4>Profile</h4>
-          <textarea class="form-control profile" rows="3"  name="description">{{description}}</textarea>
+          <textarea maxlength="1500" class="form-control profile" rows="3"  name="description">{{description}}</textarea>
         </div>
         <button type='submit' class='btn btn-success btn-block'>Submit</button>
       </form>
@@ -61,17 +61,19 @@ View Course
       <h3>Course Description:</h3>
       <p class="profile">{{description}}</p>
     {% else %}
-      <h3>Roster</h3>
-      {% for student in students %}
-      <div class="row">
-        <div class="col-md-8">
-          <a href="/students/{{student.id}}">{{student.name}}</a>
+      <h3>Roster:</h3>
+      <div class='panel panel-default'>
+        <div class='panel-heading'>
+          Student
         </div>
-        <div class="col-md-4">
-          {{student.id}}
-        </div>
+        <ul class='list-group'>
+          {% for student in students %}
+            <a href="/students/{{student.id}}" <li class='list-group-item'> {{student.name}} </li></a>
+          {% endfor %} 
+          
+        </ul>
       </div>
-      {% endfor %}
+      
     {% endif %}
   </div>
 </div>
