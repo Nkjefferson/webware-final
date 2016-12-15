@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}
+View Student
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <nav class="navbar navbar-default navbar-static-top">
+    <div class="container-fluid">
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li><a>Welcome to WebBanner</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href='/logout'>Log Out</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="col-md-6 col-md-offset-3">
+    <div id="view_profile">
+      <div class="row">
+        <div class="col-md-8">
+          <h4>Name</h4>
+          <p class="name">{{name}}</p>
+          <h4>Profile</h4>
+          <p class="profile">{{profile}}</p>
+        </div>
+        <div class="col-md-4">
+          <h4>Image</h4>
+          <img class="img_url img-responsive" src="{{ img_url }}">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

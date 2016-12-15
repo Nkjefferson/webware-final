@@ -82,6 +82,21 @@ router.get('/courses/:id', function (req, res) {
   });
 });
 
+router.get('/courses/:id/game', function(req, res) {
+  models.Course.find({
+    where: {
+      id: req.params.id
+    },
+    include: [{all: true}]
+  }).then(function(course) {
+    res.render('name_game', {
+      course: course,
+      students: course.Students,
+      students_count: course.Students.length
+    });
+  });
+});
+
 router.post('/courses/add', function(req, res) {
   var professor_id = req.session.currentProfessor.id;
   var course_name = req.body.name;
@@ -283,6 +298,20 @@ router.post('/professor', function(req, res) {
         res.redirect('/');
       });
     }
+  });
+});
+
+router.get('/students/:id', function(req, res){
+  models.Student.find({
+    where: {
+      id: req.params.id
+    }
+  }).then(function(student){
+    res.render('student', {
+      name: student.name,
+      profile: student.profile,
+      img_url: student.img_url,
+    });
   });
 });
 
