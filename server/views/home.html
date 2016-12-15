@@ -66,6 +66,12 @@ Home
         <button type='submit' class='btn btn-success btn-block'>Submit</button>
       </form>
     </div>
+    {% if student_role %}
+    <hr>
+    <h4>Available Courses</h4>
+    <div id="all_courses">
+    </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
