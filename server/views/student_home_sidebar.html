@@ -1,0 +1,18 @@
+<h4>Your Courses</h4>
+<input type="number" id="student_id" student_id="{{id}}" hidden>
+<div id="courses">
+  {% for course in courses %}
+  <div class="row left">
+    <div class="col-md-8">
+      <button class="course_button btn btn-block btn-link left" course_id="{{course.id}}">
+        {{course.name}}
+      </button>
+    </div>
+    <div class="col-md-4">
+      <button class="course_drop_button btn btn-sm btn-block btn-danger" course_id="{{course.id}}">
+        Drop
+      </button>
+    </div>
+  </div>
+  {% endfor %}
+</div>

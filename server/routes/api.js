@@ -119,7 +119,6 @@ router.post('/registrations', function(req, res) {
 UPDATE objects.
  */
 router.put('/professors/:id', function(req, res) {
-  console.log(req.body);
   models.Professor.find({
     where: {
       id: req.params.id
@@ -133,6 +132,25 @@ router.put('/professors/:id', function(req, res) {
       }).then(function(professor) {
         req.session.currentProfessor = professor;
         res.json(professor);
+      });
+    }
+  });
+});
+
+router.put('/students/:id', function(req, res) {
+  models.Student.find({
+    where: {
+      id: req.params.id
+    },
+    include: [{all: true}]
+  }).then(function(student) {
+    if(student){
+      student.updateAttributes({
+        profile: req.body.profile,
+        img_url: req.body.img_url
+      }).then(function(student) {
+        req.session.currentStudent = student;
+        res.json(student);
       });
     }
   });
