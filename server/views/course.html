@@ -45,7 +45,7 @@ View Course
           <h4>Name</h4>
           <input type='text' class='form-control name' name='name' value="{{name}}">
           <h4>Profile</h4>
-          <textarea maxlength="1500" class="form-control profile" rows="3"  name="description">{{description}}</textarea>
+          <textarea maxlength="500" class="form-control profile" rows="3"  name="description">{{description}}</textarea>
         </div>
         <button type='submit' class='btn btn-success btn-block'>Submit</button>
       </form>
@@ -64,7 +64,7 @@ View Course
       <h3>Roster:</h3>
       <div class='panel panel-default'>
         <div class='panel-heading'>
-          Student
+          Students
         </div>
         <ul class='list-group'>
           {% for student in students %}
